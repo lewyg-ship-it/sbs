@@ -1,0 +1,39 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+	const updates = await getCollection('updates');
+	return updates.map((update) => ({
+		params: { id: update.id },
+		props: { update },
+	}));
+}
+
+const { update } = Astro.props;
+const { Content } = await render(update);
+---
+
+<Layout title={update.data.title}>
+	<article>
+		<h1>{update.data.title}</h1>
+		<time datetime={update.data.date.toISOString()}>
+			{update.data.date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+		</time>
+		<div class="content">
+			<Content />
+		</div>
+	</article>
+</Layout>
+
+<style>
+	time {
+		display: block;
+		color: #7a828c;
+		font-size: 0.9rem;
+		margin: 0.25rem 0 1.5rem;
+	}
+	.content {
+		line-height: 1.6;
+	}
+</style>
