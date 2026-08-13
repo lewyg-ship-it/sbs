@@ -1,0 +1,169 @@
+---
+---
+
+<div class="tz-selector panel">
+	<label for="tz-select" class="tz-label">Your timezone</label>
+	<select id="tz-select"></select>
+	<p id="tz-current" class="tz-current"></p>
+
+	<ul id="tz-results" class="tz-results"></ul>
+</div>
+
+<script>
+	const RESET_UTC_HOUR = 18;
+	const RESET_UTC_MINUTE = 0;
+
+	const TINMAN_EVENTS = [
+		{ label: '1st Tinman', hoursBeforeReset: 23 },
+		{ label: '2nd Tinman', hoursBeforeReset: 7 },
+		{ label: '3rd Tinman', hoursBeforeReset: 1 },
+	];
+
+	const FALLBACK_ZONES = [
+		'UTC',
+		'America/Los_Angeles',
+		'America/Denver',
+		'America/Chicago',
+		'America/New_York',
+		'America/Sao_Paulo',
+		'Europe/London',
+		'Europe/Berlin',
+		'Europe/Moscow',
+		'Asia/Kolkata',
+		'Asia/Singapore',
+		'Asia/Tokyo',
+		'Australia/Sydney',
+		'Pacific/Auckland',
+	];
+
+	function getZones() {
+		try {
+			if (typeof Intl.supportedValuesOf === 'function') {
+				return Intl.supportedValuesOf('timeZone');
+			}
+		} catch {
+			// fall through to fallback list
+		}
+		return FALLBACK_ZONES;
+	}
+
+	function resetInstant() {
+		const now = new Date();
+		return new Date(
+			Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), RESET_UTC_HOUR, RESET_UTC_MINUTE, 0)
+		);
+	}
+
+	function formatTime(date, tz) {
+		return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: tz }).format(
+			date
+		);
+	}
+
+	function formatOffset(tz) {
+		const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'shortOffset' }).formatToParts(
+			new Date()
+		);
+		const offset = parts.find((part) => part.type === 'timeZoneName');
+		return offset ? offset.value : '';
+	}
+
+	const select = document.getElementById('tz-select');
+	const currentEl = document.getElementById('tz-current');
+	const resultsEl = document.getElementById('tz-results');
+
+	const zones = getZones().slice().sort();
+	const detected = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+	for (const zone of zones) {
+		const option = document.createElement('option');
+		option.value = zone;
+		option.textContent = zone.replace(/_/g, ' ');
+		if (zone === detected) option.selected = true;
+		select.appendChild(option);
+	}
+
+	function render() {
+		const tz = select.value;
+		const reset = resetInstant();
+
+		currentEl.textContent = `${tz.replace(/_/g, ' ')} (${formatOffset(tz)})`;
+
+		resultsEl.innerHTML = '';
+
+		const resetRow = document.createElement('li');
+		resetRow.innerHTML = `<span>Daily Reset</span><time>${formatTime(reset, tz)}</time>`;
+		resultsEl.appendChild(resetRow);
+
+		for (const event of TINMAN_EVENTS) {
+			const eventTime = new Date(reset.getTime() - event.hoursBeforeReset * 3600 * 1000);
+			const row = document.createElement('li');
+			row.innerHTML = `<span>${event.label} <small>(-${event.hoursBeforeReset}h)</small></span><time>${formatTime(eventTime, tz)}</time>`;
+			resultsEl.appendChild(row);
+		}
+	}
+
+	select.addEventListener('change', render);
+	render();
+</script>
+
+<style>
+	.tz-selector {
+		margin-top: 2rem;
+	}
+	.tz-label {
+		display: block;
+		font-family: var(--font-display);
+		font-size: 0.85rem;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		color: var(--color-gold);
+		margin-bottom: 0.5rem;
+	}
+	select {
+		width: 100%;
+		background: var(--color-bg-alt);
+		color: var(--color-text);
+		border: 1px solid var(--color-panel-border);
+		border-radius: 2px;
+		padding: 0.5rem 0.75rem;
+		font-family: var(--font-body);
+		font-size: 1rem;
+	}
+	.tz-current {
+		margin: 0.5rem 0 1rem;
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
+	}
+	.tz-results {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+	}
+	.tz-results li {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 1rem;
+		border-bottom: 1px solid var(--color-panel-border);
+		padding-bottom: 0.5rem;
+	}
+	.tz-results li:last-child {
+		border-bottom: none;
+	}
+	.tz-results span {
+		font-family: var(--font-display);
+	}
+	.tz-results small {
+		color: var(--color-text-muted);
+		font-family: var(--font-body);
+	}
+	.tz-results time {
+		color: var(--color-gold-bright);
+		font-weight: 600;
+		white-space: nowrap;
+	}
+</style>
