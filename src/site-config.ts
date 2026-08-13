@@ -1,4 +1,4 @@
 export const siteConfig = {
-  name: 'Your Clan Name',
-  tagline: 'Replace this tagline in src/site-config.ts',
+  name: 'Sweet But Savage',
+  tagline: 'At SBS, we are sweet, but also savage! We follow K312 ROE+IKFPA!',
 };
