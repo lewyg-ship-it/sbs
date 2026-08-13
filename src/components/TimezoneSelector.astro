@@ -10,8 +10,9 @@
 </div>
 
 <script>
-	const RESET_UTC_HOUR = 18;
-	const RESET_UTC_MINUTE = 0;
+	const RESET_REFERENCE_TZ = 'America/New_York';
+	const RESET_LOCAL_HOUR = 13;
+	const RESET_LOCAL_MINUTE = 0;
 
 	const TINMAN_EVENTS = [
 		{ label: '1st Tinman', hoursBeforeReset: 23 },
@@ -47,11 +48,34 @@
 		return FALLBACK_ZONES;
 	}
 
+	function getUtcOffsetMinutes(date, timeZone) {
+		const parts = new Intl.DateTimeFormat('en-US', { timeZone, timeZoneName: 'longOffset' }).formatToParts(date);
+		const offsetPart = parts.find((part) => part.type === 'timeZoneName');
+		const match = offsetPart && offsetPart.value.match(/GMT([+-])(\d{1,2})(?::(\d{2}))?/);
+		if (!match) return 0;
+		const sign = match[1] === '-' ? -1 : 1;
+		const hours = Number(match[2]);
+		const minutes = match[3] ? Number(match[3]) : 0;
+		return sign * (hours * 60 + minutes);
+	}
+
 	function resetInstant() {
+		// Reset always lands at 1:00 PM in America/New_York, DST included, so
+		// find today's date as seen there, then convert that wall-clock time to UTC.
 		const now = new Date();
-		return new Date(
-			Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), RESET_UTC_HOUR, RESET_UTC_MINUTE, 0)
-		);
+		const dateParts = new Intl.DateTimeFormat('en-US', {
+			timeZone: RESET_REFERENCE_TZ,
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit',
+		}).formatToParts(now);
+		const year = Number(dateParts.find((part) => part.type === 'year').value);
+		const month = Number(dateParts.find((part) => part.type === 'month').value);
+		const day = Number(dateParts.find((part) => part.type === 'day').value);
+
+		const guess = new Date(Date.UTC(year, month - 1, day, RESET_LOCAL_HOUR, RESET_LOCAL_MINUTE, 0));
+		const offsetMinutes = getUtcOffsetMinutes(guess, RESET_REFERENCE_TZ);
+		return new Date(guess.getTime() - offsetMinutes * 60 * 1000);
 	}
 
 	function formatTime(date, tz) {
