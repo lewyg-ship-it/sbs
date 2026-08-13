@@ -15,7 +15,7 @@ const updates = (await getCollection('updates')).sort(
 		) : (
 			<ul class="update-list">
 				{updates.map((update) => (
-					<li>
+					<li class="panel">
 						<a href={`/updates/${update.id}`}>{update.data.title}</a>
 						<time datetime={update.data.date.toISOString()}>
 							{update.data.date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -34,24 +34,20 @@ const updates = (await getCollection('updates')).sort(
 		padding: 0;
 		display: flex;
 		flex-direction: column;
-		gap: 1.5rem;
-	}
-	.update-list li {
-		border-bottom: 1px solid #2a2f36;
-		padding-bottom: 1rem;
+		gap: 1.25rem;
 	}
 	.update-list a {
-		font-size: 1.1rem;
-		font-weight: 600;
+		font-family: var(--font-display);
+		font-size: 1.15rem;
 	}
 	.update-list time {
 		display: block;
-		color: #7a828c;
-		font-size: 0.9rem;
-		margin-top: 0.15rem;
+		color: var(--color-text-muted);
+		font-size: 0.85rem;
+		margin-top: 0.2rem;
 	}
 	.update-list p {
-		color: #c2c7cd;
-		margin: 0.5rem 0 0;
+		color: var(--color-text-muted);
+		margin: 0.6rem 0 0;
 	}
 </style>

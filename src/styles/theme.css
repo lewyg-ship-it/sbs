@@ -1,0 +1,87 @@
+:root {
+	--color-bg: #14100c;
+	--color-bg-alt: #1d1712;
+	--color-panel: #241d16;
+	--color-panel-border: #4a3a22;
+	--color-gold: #c9a24b;
+	--color-gold-bright: #e0c069;
+	--color-red: #7a1f1f;
+	--color-red-bright: #b0392f;
+	--color-text: #e8dcc0;
+	--color-text-muted: #b3a689;
+	--font-display: 'Cinzel', 'Times New Roman', serif;
+	--font-body: 'EB Garamond', Georgia, serif;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	background-color: var(--color-bg);
+	background-image:
+		radial-gradient(circle at 15% 10%, rgba(255, 255, 255, 0.03), transparent 45%),
+		radial-gradient(circle at 85% 70%, rgba(0, 0, 0, 0.35), transparent 55%);
+	color: var(--color-text-muted);
+	font-family: var(--font-body);
+	font-size: 18px;
+}
+
+body {
+	margin: 0;
+}
+
+h1,
+h2,
+h3 {
+	font-family: var(--font-display);
+	color: var(--color-gold-bright);
+	letter-spacing: 0.04em;
+	text-shadow: 0 1px 0 #000, 0 0 14px rgba(201, 162, 75, 0.15);
+	margin: 0 0 0.5rem;
+}
+
+a {
+	color: var(--color-gold);
+	text-decoration: none;
+	transition: color 0.15s ease;
+}
+
+a:hover {
+	color: var(--color-red-bright);
+}
+
+.divider {
+	height: 2px;
+	margin: 0;
+	background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+	position: relative;
+}
+
+.divider::after {
+	content: '';
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 8px;
+	height: 8px;
+	background: var(--color-gold-bright);
+	transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.panel {
+	background: var(--color-panel);
+	border: 1px solid var(--color-panel-border);
+	border-left: 3px solid var(--color-red);
+	border-radius: 2px;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 2px 6px rgba(0, 0, 0, 0.4);
+	padding: 1rem 1.25rem;
+}
+
+.eyebrow {
+	font-family: var(--font-display);
+	font-size: 0.75rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--color-gold);
+}

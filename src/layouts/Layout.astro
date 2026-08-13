@@ -1,4 +1,5 @@
 ---
+import '../styles/theme.css';
 import { siteConfig } from '../site-config';
 
 interface Props {
@@ -17,6 +18,12 @@ const pageTitle = title ? `${title} | ${siteConfig.name}` : siteConfig.name;
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{pageTitle}</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+			rel="stylesheet"
+		/>
 	</head>
 	<body>
 		<header>
@@ -25,9 +32,11 @@ const pageTitle = title ? `${title} | ${siteConfig.name}` : siteConfig.name;
 				<a href="/updates">Updates</a>
 			</nav>
 		</header>
+		<div class="divider"></div>
 		<main>
 			<slot />
 		</main>
+		<div class="divider"></div>
 		<footer>
 			<p>&copy; {new Date().getFullYear()} {siteConfig.name}</p>
 		</footer>
@@ -35,20 +44,9 @@ const pageTitle = title ? `${title} | ${siteConfig.name}` : siteConfig.name;
 </html>
 
 <style>
-	:global(html) {
-		font-family: system-ui, sans-serif;
-		background: #111417;
-		color: #e6e6e6;
-	}
-	:global(body) {
-		margin: 0;
-	}
-	:global(a) {
-		color: #7dd3fc;
-	}
 	header {
-		border-bottom: 1px solid #2a2f36;
-		padding: 1rem 1.5rem;
+		background: var(--color-bg-alt);
+		padding: 1.1rem 1.5rem;
 	}
 	nav {
 		display: flex;
@@ -58,22 +56,34 @@ const pageTitle = title ? `${title} | ${siteConfig.name}` : siteConfig.name;
 		margin: 0 auto;
 	}
 	.brand {
+		font-family: var(--font-display);
 		font-weight: 700;
-		font-size: 1.1rem;
-		text-decoration: none;
-		color: #e6e6e6;
+		font-size: 1.25rem;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--color-gold-bright);
+		text-shadow: 0 1px 0 #000;
+	}
+	.brand:hover {
+		color: var(--color-gold-bright);
+	}
+	nav a:not(.brand) {
+		font-family: var(--font-display);
+		font-size: 0.85rem;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
 	}
 	main {
 		max-width: 860px;
 		margin: 0 auto;
-		padding: 2rem 1.5rem;
+		padding: 2.5rem 1.5rem;
 		min-height: 60vh;
 	}
 	footer {
-		border-top: 1px solid #2a2f36;
+		background: var(--color-bg-alt);
 		padding: 1.5rem;
 		text-align: center;
-		color: #7a828c;
+		color: var(--color-text-muted);
 		font-size: 0.85rem;
 	}
 </style>
